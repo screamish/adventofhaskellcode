@@ -1,16 +1,17 @@
 module Advent.Day2 where
 
-import Data.Text
+import qualified Data.Text as T
+import Data.List
+import Data.Either (rights)
 import Text.Parsec
 import Text.Parsec.Text (Parser)
 import Text.Parsec.Token
 import Text.Parsec.Language (emptyDef)
 
-data Dimension = Dimension (Int, Int, Int)
-                 deriving (Show, Eq)
+type Dimensions = (Int, Int, Int)
 
-ribbonRequired :: Text -> Either ParseError Dimension
-ribbonRequired dim =
+parseDimensions :: T.Text -> Either ParseError Dimensions
+parseDimensions dim =
   parse dimensions "" dim
   where
     dimensions = do
@@ -19,8 +20,22 @@ ribbonRequired dim =
       y <- int
       char 'x'
       z <- int
-      return $ Dimension (x,y,z)
+      return (x,y,z)
 
     lexer = makeTokenParser emptyDef
     int :: Parser Int
     int = read <$> many1 digit
+
+ribbonForDimensions :: Dimensions -> Int
+ribbonForDimensions (x, y, z) =
+  bow + wrap
+  where
+    wrap = sum (fmap (* 2) . take 2 $ sort [x,y,z])
+    bow = x * y * z
+
+calcRibbon :: T.Text -> Int
+calcRibbon input =
+  sum $ rights $ fmap parse $ lines
+  where
+    lines = T.lines input
+    parse x = fmap ribbonForDimensions $ parseDimensions x
