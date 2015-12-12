@@ -2,11 +2,8 @@ module Advent.Day3 where
 
 import qualified Data.Text as T
 import Data.List
-import Data.Either (rights)
 import Text.Parsec
-import Text.Parsec.Text (Parser)
 import Control.Lens
-import Control.Lens.Tuple
 import qualified Data.MultiSet as MultiSet
 import Control.Arrow ((>>>))
 
@@ -37,9 +34,21 @@ visits =
     delta West = _1 +~ -1
     delta East = _1 +~ 1
 
-visitedHouses :: [Direction] -> Int
+visitedHouses :: [House] -> Int
 visitedHouses =
-  visits
-  >>> MultiSet.fromList
+  MultiSet.fromList
   >>> MultiSet.toOccurList
   >>> length
+
+split :: [a] -> ([a], [a])
+split xs =
+  let ith = zip ([0..] :: [Int]) xs
+      (l, r) = partition (\(i,_) -> i `mod` 2 == 0) ith
+      strip = fmap snd
+  in (strip l, strip r)
+
+totalVisitedWithRobo :: [Direction] -> Int
+totalVisitedWithRobo =
+  split
+  >>> (\(l, r) -> visits l ++ visits r)
+  >>> visitedHouses
