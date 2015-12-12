@@ -1,14 +1,17 @@
 module Main where
 
 import qualified Data.Text.IO as IO
+import qualified Data.Text.Lazy as T
 import Advent.Day2
 import Advent.Day3
+import Advent.Day4
 import Data.Either
 
 main :: IO ()
 main = do
   day2
   day3
+  day4
 
 day2 :: IO ()
 day2 = do
@@ -29,3 +32,9 @@ day3 = do
             either
               (const "parse error")
               (\t -> show t ++ " houses visited")
+
+day4 :: IO ()
+day4 =
+  let result = hashPart "bgvyzdsv"
+  in
+    print $ "Day 4(a): " ++ show result ++ " is the lowest number that can generate an MD5 hash with 5 leading zeroes"
