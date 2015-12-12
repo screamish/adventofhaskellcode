@@ -29,6 +29,8 @@ main = hspec $ do
         totalDelivered dir `shouldBe` 2
       it "visits these houses" $
         visits dir `shouldBe` [(0,0), (1,0)]
+      it "visits 2 houses" $
+        visitedHouses dir `shouldBe` 2
 
     describe "The case '^>v<'" $
       let dir = [North, East, South, West] in do
@@ -36,6 +38,8 @@ main = hspec $ do
         totalDelivered dir `shouldBe` 5
       it "visits these houses" $
         visits dir `shouldBe` [(0,0), (0,1), (1,1), (1,0), (0,0)]
+      it "visits 4 houses" $
+        visitedHouses dir `shouldBe` 4
 
     describe "The case '^v^v^v^v^v'" $
       let dir = (take 10 . cycle $ [North, South]) in do
@@ -43,3 +47,5 @@ main = hspec $ do
         totalDelivered dir `shouldBe` 11
       it "visits these houses" $
         visits dir `shouldBe` (take 11 . cycle) [(0,0), (0,1)]
+      it "visits 2 houses" $
+        visitedHouses dir `shouldBe` 2
