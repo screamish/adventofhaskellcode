@@ -5,8 +5,6 @@ import Data.List
 import Data.Either (rights)
 import Text.Parsec
 import Text.Parsec.Text (Parser)
-import Text.Parsec.Token
-import Text.Parsec.Language (emptyDef)
 
 type Dimensions = (Int, Int, Int)
 
@@ -22,7 +20,6 @@ parseDimensions dim =
       z <- int
       return (x,y,z)
 
-    lexer = makeTokenParser emptyDef
     int :: Parser Int
     int = read <$> many1 digit
 

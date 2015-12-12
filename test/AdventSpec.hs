@@ -3,6 +3,7 @@ module Main where
 import Test.Hspec
 import Test.QuickCheck
 import Advent.Day2
+import Advent.Day3
 
 main :: IO ()
 main = hspec $ do
@@ -17,3 +18,22 @@ main = hspec $ do
 
     it "calculates ribbon #2" $ do
       ribbonForDimensions (1, 1, 10) `shouldBe` 14
+
+  describe "Day 3" $ do
+    it "parses directions" $
+      parseDirections "^>>v<" `shouldBe` Right [North, East, East, South, West]
+
+    describe "The case '>'" $
+      let dir = [East] in do
+      it "delivers 2 presents" $
+        totalDelivered dir `shouldBe` 2
+
+    describe "The case '^>v<'" $
+      let dir = [North, East, South, West] in do
+      it "delivers 5 presents" $
+        totalDelivered dir `shouldBe` 5
+
+    describe "The case '^v^v^v^v^v'" $
+      let dir = (take 10 . cycle $ [North, South]) in do
+      it "delivers 11 presents" $
+        totalDelivered dir `shouldBe` 11
