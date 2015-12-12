@@ -4,6 +4,7 @@ import Test.Hspec
 import Test.QuickCheck
 import Advent.Day2
 import Advent.Day3
+import Advent.Day4
 
 main :: IO ()
 main = hspec $ do
@@ -58,3 +59,10 @@ main = hspec $ do
       it "^v^v^v^v^v visits 11 houses" $
         let dir = (take 10 . cycle $ [North, South]) in
         totalVisitedWithRobo dir `shouldBe` 11
+
+  describe "Day 4" $ do
+    it "For input 'abcdef' the lowest number to generate a hash with 5 leading zeroes is 609043" $
+      hashPart "abcdef" `shouldBe` 609043
+
+    it "For input 'pqrstuv' the lowest number to generate a hash with 5 leading zeroes is 1048970" $
+      hashPart "pqrstuv" `shouldBe` 1048970
