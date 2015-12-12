@@ -6,6 +6,8 @@ import Data.Either (rights)
 -- import Data.Either.Combinators (fromRight)
 import Text.Parsec
 import Text.Parsec.Text (Parser)
+import Control.Lens
+import Control.Lens.Tuple
 
 data Direction = North | South | East | West deriving (Eq, Show)
 type House = (Int, Int)
@@ -24,3 +26,13 @@ parseDirections =
 totalDelivered :: [Direction] -> Int
 totalDelivered d =
   length d + 1
+
+visits :: [Direction] -> [House]
+visits =
+  scanl move (0,0)
+  where
+    move = flip delta
+    delta North = _2 +~ 1
+    delta South = _2 +~ -1
+    delta West = _1 +~ -1
+    delta East = _1 +~ 1

@@ -8,15 +8,15 @@ import Advent.Day3
 main :: IO ()
 main = hspec $ do
   describe "Day 2" $ do
-    it "parses dimensions" $ do
+    it "parses dimensions" $
       -- A present with dimensions 2x3x4 requires 2+2+3+3 = 10 feet of ribbon to wrap the present plus 2*3*4 = 24 feet of ribbon for the bow, for a total of 34 feet.
       -- ribbonRequired "2x3x4" `shouldBe` Right 34
       parseDimensions "2x3x4" `shouldBe` Right (2, 3, 4)
 
-    it "calculates ribbon #1" $ do
+    it "calculates ribbon #1" $
       ribbonForDimensions (2, 3, 4) `shouldBe` 34
 
-    it "calculates ribbon #2" $ do
+    it "calculates ribbon #2" $
       ribbonForDimensions (1, 1, 10) `shouldBe` 14
 
   describe "Day 3" $ do
@@ -27,13 +27,19 @@ main = hspec $ do
       let dir = [East] in do
       it "delivers 2 presents" $
         totalDelivered dir `shouldBe` 2
+      it "visits these houses" $
+        visits dir `shouldBe` [(0,0), (1,0)]
 
     describe "The case '^>v<'" $
       let dir = [North, East, South, West] in do
       it "delivers 5 presents" $
         totalDelivered dir `shouldBe` 5
+      it "visits these houses" $
+        visits dir `shouldBe` [(0,0), (0,1), (1,1), (1,0), (0,0)]
 
     describe "The case '^v^v^v^v^v'" $
       let dir = (take 10 . cycle $ [North, South]) in do
       it "delivers 11 presents" $
         totalDelivered dir `shouldBe` 11
+      it "visits these houses" $
+        visits dir `shouldBe` (take 11 . cycle) [(0,0), (0,1)]
