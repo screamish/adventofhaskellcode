@@ -34,7 +34,9 @@ day3 = do
               (\t -> show t ++ " houses visited")
 
 day4 :: IO ()
-day4 =
-  let result = hashPart "bgvyzdsv"
-  in
-    print $ "Day 4(a): " ++ show result ++ " is the lowest number that can generate an MD5 hash with 5 leading zeroes"
+day4 = do
+  let result = hashPart 5 "bgvyzdsv"
+  print $ "Day 4(a): " ++ show result ++ " is the lowest number that can generate an MD5 hash with 5 leading zeroes"
+
+  let result = hashPart 6 "bgvyzdsv"
+  print $ "Day 4(b): " ++ show result ++ " is the lowest number that can generate an MD5 hash with 6 leading zeroes"

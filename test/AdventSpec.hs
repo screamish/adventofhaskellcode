@@ -7,7 +7,10 @@ import Advent.Day3
 import Advent.Day4
 
 main :: IO ()
-main = hspec $ do
+main = hspec spec
+
+spec :: Spec
+spec = parallel $ do
   describe "Day 2" $ do
     it "parses dimensions" $
       -- A present with dimensions 2x3x4 requires 2+2+3+3 = 10 feet of ribbon to wrap the present plus 2*3*4 = 24 feet of ribbon for the bow, for a total of 34 feet.
@@ -62,10 +65,10 @@ main = hspec $ do
 
   describe "Day 4" $ do
     it "For input 'abcdef' the lowest number to generate a hash with 5 leading zeroes is 609043" $
-      hashPart "abcdef" `shouldBe` 609043
+      hashPart 5 "abcdef" `shouldBe` 609043
 
     it "For input 'pqrstuv' the lowest number to generate a hash with 5 leading zeroes is 1048970" $
-      hashPart "pqrstuv" `shouldBe` 1048970
+      hashPart 5 "pqrstuv" `shouldBe` 1048970
 
     it "Can hash with MD5" $
       hashmd5 "abcdef609043" `shouldBe` "000001dbbfa3a5c83a2d506429c7b00e"
