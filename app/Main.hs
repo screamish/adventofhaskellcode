@@ -1,17 +1,24 @@
 module Main where
 
 import qualified Data.Text.IO as IO
+import qualified Data.Text.Lazy.IO as LIO
 import qualified Data.Text.Lazy as T
 import Advent.Day2
 import Advent.Day3
 import Advent.Day4
+import Advent.Day5
 import Data.Either
 
 main :: IO ()
-main = do
-  day2
-  day3
-  day4
+main =
+  day5
+
+day5 :: IO ()
+day5 = do
+  input <- LIO.readFile "day5input.txt"
+  let totalNice =
+        length $ filter isNice $ T.lines input
+  print $ "Day 5(a): " ++ show totalNice ++ " nice strings"
 
 day2 :: IO ()
 day2 = do
