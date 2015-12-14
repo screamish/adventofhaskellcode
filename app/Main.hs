@@ -7,7 +7,6 @@ import Advent.Day2
 import Advent.Day3
 import Advent.Day4
 import Advent.Day5
-import Data.Either
 
 main :: IO ()
 main =
@@ -42,8 +41,8 @@ day3 = do
 
 day4 :: IO ()
 day4 = do
-  let result = hashPart 5 "bgvyzdsv"
-  print $ "Day 4(a): " ++ show result ++ " is the lowest number that can generate an MD5 hash with 5 leading zeroes"
+  let hashPart5 = hashPart 5 "bgvyzdsv"
+  print $ "Day 4(a): " ++ show hashPart5 ++ " is the lowest number that can generate an MD5 hash with 5 leading zeroes"
 
-  let result = hashPart 6 "bgvyzdsv"
-  print $ "Day 4(b): " ++ show result ++ " is the lowest number that can generate an MD5 hash with 6 leading zeroes"
+  let hashPart6 = hashPart 6 "bgvyzdsv"
+  print $ "Day 4(b): " ++ show hashPart6 ++ " is the lowest number that can generate an MD5 hash with 6 leading zeroes"

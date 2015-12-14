@@ -1,13 +1,11 @@
 module Main where
 
 import Test.Hspec
-import Test.QuickCheck
+import Test.QuickCheck ()
 import Advent.Day2
 import Advent.Day3
 import Advent.Day4
 import Advent.Day5
-import qualified Data.Text.Lazy as T
-import qualified Data.Set as Set
 
 main :: IO ()
 main = hspec spec
@@ -18,21 +16,6 @@ spec = parallel $ do
     --- Day 5: Doesn't He Have Intern-Elves For This? ---
     -- Santa needs help figuring out which strings in his text file are naughty or nice.
     -- A nice string is one with all of the following properties:
-
-    it "contains at least three vowels (aeiou only), like aei, xazegov, or aeiouaeiouaeiou." $ property $ \s ->
-       let vowels = Set.fromList ("aeiou" :: String)
-           t = T.pack s
-       in
-         isNice t ==> T.length (T.filter (`Set.member` vowels) t) >= 3
-
-    it "contains at least one letter that appears twice in a row, like xx, abcdde (dd), or aabbccdd (aa, bb, cc, or dd)." $ property $ \s ->
-      let t = T.pack s
-      in isNice t ==> length (filter ((> 1) . T.length) (T.group t)) > 0
-
-    it "does not contain the strings ab, cd, pq, or xy, even if they are part of one of the other requirements." $ property $ \s ->
-      let t = T.pack s
-          naughtySubStrings = ["ab", "cd", "pq", "xy"]
-      in isNice t ==> not (any (`T.isInfixOf` t) naughtySubStrings)
 
     describe "nice strings" $ do
       it "ugknbfddgicrmopn is nice because it has at least three vowels (u...i...o...), a double letter (...dd...), and none of the disallowed substrings." $
