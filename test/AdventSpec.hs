@@ -47,6 +47,9 @@ spec = do
       it "xxyxx is nice because it has a pair that appears twice and a letter that repeats with one between, even though the letters used by each rule overlap." $
          isNice2 "xxyxx" `shouldBe` True
 
+      it "aaa is not nice because it has no overlapping pairs" $
+         isNice2 "aaa" `shouldBe` False
+
       it "uurcxstgmygtbstg is naughty because it has a pair (tg) but no repeat with a single letter between them." $
          isNice2 "uurcxstgmygtbstg" `shouldBe` False
 
