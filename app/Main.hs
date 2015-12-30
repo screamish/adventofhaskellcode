@@ -19,6 +19,10 @@ day5 = do
         length $ filter isNice $ T.lines input
   print $ "Day 5(a): " ++ show totalNice ++ " nice strings"
 
+  let totalNice2 =
+        length $ filter isNice2 $ T.lines input
+  print $ "Day 5(b): " ++ show totalNice2 ++ " nice strings"
+
 day2 :: IO ()
 day2 = do
   input <- IO.readFile "day2input.txt"
