@@ -37,7 +37,7 @@ isNice2 =
     repeatedPair [_,_] = False
     repeatedPair ( x:y:xs ) = x `elem` xs || repeatedPair (y:xs)
     pairs [] = []
-    pairs [x] = []
+    pairs [_] = []
     pairs xs = take 2 xs : (pairs . tail) xs
 
     -- It contains at least one letter which repeats with exactly one letter between them, like xyx, abcdefeghi (efe), or even aaa.
