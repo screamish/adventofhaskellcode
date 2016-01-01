@@ -25,13 +25,13 @@ spec = do
 
     describe "parsing" $ do
       it "turn on 0,0 through 999,999 would turn on (or leave on) every light." $
-        D6.parse "turn on 0,0 through 999,999" `shouldBe` Right [TurnOn ((0,0), (999,999))]
+        D6.parse "turn on 0,0 through 999,999" `shouldBe` Right [Command TurnOn ((0,0), (999,999))]
 
       it "toggle 0,0 through 999,0 would toggle the first line of 1000 lights, turning off the ones that were on, and turning on the ones that were off." $
-        D6.parse "toggle 0,0 through 999,0" `shouldBe` Right [Toggle ((0,0), (999,0))]
+        D6.parse "toggle 0,0 through 999,0" `shouldBe` Right [Command Toggle ((0,0), (999,0))]
 
       it "turn off 499,499 through 500,500 would turn off (or leave off) the middle four lights." $
-        D6.parse "turn off 499,499 through 500,500" `shouldBe` Right [TurnOff ((499,499), (500,500))]
+        D6.parse "turn off 499,499 through 500,500" `shouldBe` Right [Command TurnOff ((499,499), (500,500))]
 
   describe "Day 5" $ do
     --- Day 5: Doesn't He Have Intern-Elves For This? ---

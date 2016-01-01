@@ -28,6 +28,8 @@ library
                      , multiset
                      , pureMD5
                      , containers
+                     , mtl
+                     , vector
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings
 
