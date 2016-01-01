@@ -1,4 +1,4 @@
-{- FlexibleContexts -}
+{-# LANGUAGE FlexibleContexts #-}
 
 module Advent.Day6 where
 
@@ -68,7 +68,6 @@ step :: Command -> MyMon s ()
 step c =
   mapM_ update indices
   where
-    update :: Index -> MyMon s ()
     update (x,y) = do
         grid <- ask
         let ys = (V.!) grid y
