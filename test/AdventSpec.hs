@@ -7,6 +7,7 @@ import Advent.Day3
 import Advent.Day4
 import Advent.Day5
 import Advent.Day6 as D6
+import Control.Arrow ((>>>))
 
 main :: IO ()
 main = hspec spec
@@ -32,6 +33,20 @@ spec = do
 
       it "turn off 499,499 through 500,500 would turn off (or leave off) the middle four lights." $
         D6.parse "turn off 499,499 through 500,500" `shouldBe` Right [Command TurnOff ((499,499), (500,500))]
+
+      it "turn on 0,0 through 999,999 then turn off 499,499 through 500,500 should result in all but 4 lights being on" $
+        D6.parse "turn on 0,0 through 999,999\nturn off 499,499 through 500,500" `shouldBe` Right [Command TurnOn ((0,0), (999,999)), Command TurnOff ((499,499), (500,500))]
+
+    describe "running and counting" $ do
+      let count = D6.parse >>> fmap (D6.runSteps >>> D6.numberLit)
+      it "turn on 0,0 through 999,999 would turn on (or leave on) every light." $
+        count "turn on 0,0 through 999,999" `shouldBe` Right 1000000
+
+      it "toggle 0,0 through 999,0 would toggle the first line of 1000 lights, turning off the ones that were on, and turning on the ones that were off." $
+        count "toggle 0,0 through 999,0" `shouldBe` Right 1000
+
+      it "turn on 0,0 through 999,999 then turn off 499,499 through 500,500 should result in all but 4 lights being on" $
+        count "turn on 0,0 through 999,999\nturn off 499,499 through 500,500" `shouldBe` Right (1000000 - 4)
 
   describe "Day 5" $ do
     --- Day 5: Doesn't He Have Intern-Elves For This? ---

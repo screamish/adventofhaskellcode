@@ -3,14 +3,22 @@ module Main where
 import qualified Data.Text.IO as IO
 import qualified Data.Text.Lazy.IO as LIO
 import qualified Data.Text.Lazy as T
+import Control.Arrow ((>>>))
 import Advent.Day2
 import Advent.Day3
 import Advent.Day4
 import Advent.Day5
+import qualified Advent.Day6 as D6
 
 main :: IO ()
 main =
-  day5
+  day6
+
+day6 :: IO ()
+day6 = do
+  input <- IO.readFile "day6input.txt"
+  let totalLit = (D6.numberLit . D6.runSteps) <$> D6.parse input
+  print $ "Day 6(a): " ++ show totalLit ++ " lights lit"
 
 day5 :: IO ()
 day5 = do
