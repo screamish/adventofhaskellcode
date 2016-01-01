@@ -38,7 +38,7 @@ spec = do
         D6.parse "turn on 0,0 through 999,999\nturn off 499,499 through 500,500" `shouldBe` Right [Command TurnOn ((0,0), (999,999)), Command TurnOff ((499,499), (500,500))]
 
     describe "running and counting" $ do
-      let count = D6.parse >>> fmap (D6.runSteps >>> D6.numberLit)
+      let count = D6.parse >>> fmap (D6.runSteps D6.english False >>> D6.numberLit)
       it "turn on 0,0 through 999,999 would turn on (or leave on) every light." $
         count "turn on 0,0 through 999,999" `shouldBe` Right 1000000
 
@@ -48,6 +48,22 @@ spec = do
       it "turn on 0,0 through 999,999 then turn off 499,499 through 500,500 should result in all but 4 lights being on" $
         count "turn on 0,0 through 999,999\nturn off 499,499 through 500,500" `shouldBe` Right (1000000 - 4)
 
+    describe "part b (elvish)" $ do
+--       You just finish implementing your winning light pattern when you realize you mistranslated Santa's message from Ancient Nordic Elvish.
+
+-- The light grid you bought actually has individual brightness controls; each light can have a brightness of zero or more. The lights all start at zero.
+
+      it "The phrase turn on actually means that you should increase the brightness of those lights by 1." $ do
+        D6.elvish TurnOn 1 `shouldBe` 2
+
+      it "The phrase turn off actually means that you should decrease the brightness of those lights by 1, to a minimum of zero." $ do
+        D6.elvish TurnOff 1 `shouldBe` 0
+        D6.elvish TurnOff 0 `shouldBe` 0
+
+      it "The phrase toggle actually means that you should increase the brightness of those lights by 2." $ do
+        D6.elvish Toggle 0 `shouldBe` 2
+        D6.elvish Toggle 99 `shouldBe` 101
+  
   describe "Day 5" $ do
     --- Day 5: Doesn't He Have Intern-Elves For This? ---
     -- Santa needs help figuring out which strings in his text file are naughty or nice.

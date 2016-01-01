@@ -17,7 +17,7 @@ main =
 day6 :: IO ()
 day6 = do
   input <- IO.readFile "day6input.txt"
-  let totalLit = (D6.numberLit . D6.runSteps) <$> D6.parse input
+  let totalLit = (D6.numberLit . D6.runSteps D6.english False) <$> D6.parse input
   print $ "Day 6(a): " ++ show totalLit ++ " lights lit"
 
 day5 :: IO ()
