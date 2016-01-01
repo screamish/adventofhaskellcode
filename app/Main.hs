@@ -3,7 +3,6 @@ module Main where
 import qualified Data.Text.IO as IO
 import qualified Data.Text.Lazy.IO as LIO
 import qualified Data.Text.Lazy as T
-import Control.Arrow ((>>>))
 import Advent.Day2
 import Advent.Day3
 import Advent.Day4
@@ -19,6 +18,9 @@ day6 = do
   input <- IO.readFile "day6input.txt"
   let totalLit = (D6.numberLit . D6.runSteps D6.english False) <$> D6.parse input
   print $ "Day 6(a): " ++ show totalLit ++ " lights lit"
+
+  let brightness = (D6.totalBrightness . D6.runSteps D6.elvish 0) <$> D6.parse input
+  print $ "Day 6(b): " ++ show brightness ++ " total brightness"
 
 day5 :: IO ()
 day5 = do

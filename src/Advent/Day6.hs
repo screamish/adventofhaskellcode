@@ -100,3 +100,6 @@ numberLit =
   where
     rows :: V.Vector Bool -> Int
     rows = length . V.filter id
+
+totalBrightness :: LightGrid Int -> Int
+totalBrightness = V.sum . fmap V.sum
