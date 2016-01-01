@@ -1,12 +1,23 @@
+{- FlexibleContexts -}
+
 module Advent.Day6 where
 
 import qualified Data.Text as T
-import Text.Parsec as P
+import Text.Parsec as Parsec (many1
+                            , char
+                            , newline
+                            , sepEndBy
+                            , try
+                            , string
+                            , ParseError
+                            , digit
+                            , choice
+                            , parse)
 import qualified Data.Vector as V
 import qualified Data.Vector.Mutable as VM
-import Control.Monad.ST
-import Control.Monad.Reader
-import Control.Monad
+import Control.Monad.ST (ST, runST)
+import Control.Monad.Reader (ReaderT, runReaderT, lift, ask)
+import Control.Monad (forM, forM_)
 
 data Action = TurnOn
             | TurnOff
@@ -25,7 +36,7 @@ type MyMon s = ReaderT (LightGridM s) (ST s)
 
 parse :: T.Text -> Either ParseError [Command]
 parse =
-  P.parse commandP ""
+  Parsec.parse commandP ""
   where
     commandP = sepEndBy command newline
 
@@ -51,21 +62,21 @@ delta Toggle = not
 reifyBounds :: Bounds -> [Index]
 reifyBounds ((x1,y1), (x2,y2)) = [(x,y) | x <- [x1 .. x2], y <- [y1 .. y2]]
 
+-- | I have no real idea how performant this is. I started going down the rabbit
+-- hole of mutable vectors inside a monad stack and this is where I ended up.
 step :: Command -> MyMon s ()
 step c =
-  traverse setter indices
+  mapM_ update indices
   where
-    traverse :: (Bool -> Bool) -> [Index] -> MyMon s ()
-    traverse _ [] = return ()
-    traverse f ((x,y):rest) = do
+    update :: Index -> MyMon s ()
+    update (x,y) = do
         grid <- ask
         let ys = (V.!) grid y
         -- No idea why I can't reference modify, it's there on Hackage :S
         -- so have to do it the verbose way
         -- lift $ Data.Vector.Mutable.modify ys f x
         v <- lift $ VM.read ys x
-        lift $ VM.write ys x (f v)
-        traverse f rest
+        lift $ VM.write ys x (setter v)
     setter = delta $ _action c
     indices = reifyBounds $ _bounds c
 
