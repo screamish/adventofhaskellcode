@@ -7,6 +7,7 @@ import Advent.Day3
 import Advent.Day4
 import Advent.Day5
 import Advent.Day6 as D6
+import Advent.Day7 as D7
 import Control.Arrow ((>>>))
 
 main :: IO ()
@@ -14,6 +15,16 @@ main = hspec spec
 
 spec :: Spec
 spec = do
+  describe "Day 7" $
+    it "456 -> y" $ D7.parse "456 -> y" `shouldBe` Wire (Val 456) "y"
+
+-- x AND y -> d
+-- x OR y -> e
+-- x LSHIFT 2 -> f
+-- y RSHIFT 2 -> g
+-- NOT x -> h
+
+
   describe "Day 6" $ do
 --- Day 6: Probably a Fire Hazard ---
 
