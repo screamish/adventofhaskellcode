@@ -10,8 +10,10 @@ import Data.Char
 
 type Name = String
 data Wire = Wire Body Name deriving (Eq, Show, Ord)
-data Op = AND Name Name
-        | OR Name Name deriving (Eq, Show, Ord)
+data Arg = Name Name
+         | ArgVal Int deriving (Eq, Show, Ord)
+data Op = AND Arg Arg
+        | OR Arg Arg deriving (Eq, Show, Ord)
 data Body = Val Int
           | Op Op deriving (Eq, Show, Ord)
 
@@ -25,7 +27,9 @@ wireG = mdo
       name = token $ some (satisfy isAsciiLower) <?> "identifier"
       num :: Prod r String Char Int
       num = token $ read <$> some (satisfy isDigit) <?> "number"
-      op c i = Op <$> (c <$> name <* token (word i) <*> name) <?> i
+      arg = (ArgVal <$> num) <|> (Name <$> name)
+      op constructor identifier =
+        Op <$> (constructor <$> arg <* token (word identifier) <*> arg) <?> identifier
 
   val <- rule $ Val <$> num <?> "Val"
   and <- rule $ op AND "AND"

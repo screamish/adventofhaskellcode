@@ -17,8 +17,9 @@ spec :: Spec
 spec = do
   describe "Day 7" $ do
     it "456 -> y" $ D7.parse "456 -> y" `shouldBe` [Wire (Val 456) "y"]
-    it "x AND y -> d" $ D7.parse "x AND y -> d" `shouldBe` [Wire (Op ("x" `AND` "y")) "d"]
-    it "x OR y -> e" $ D7.parse "x OR y -> e" `shouldBe` [Wire (Op ("x" `OR` "y")) "e"]
+    it "x AND y -> d" $ D7.parse "x AND y -> d" `shouldBe` [Wire (Op (Name "x" `AND` Name "y")) "d"]
+    it "1 AND y -> d" $ D7.parse "1 AND y -> d" `shouldBe` [Wire (Op (ArgVal 1 `AND` Name "y")) "d"]
+    it "x OR y -> e" $ D7.parse "x OR y -> e" `shouldBe` [Wire (Op (Name "x" `OR` Name "y")) "e"]
 -- x LSHIFT 2 -> f
 -- y RSHIFT 2 -> g
 -- NOT x -> h
