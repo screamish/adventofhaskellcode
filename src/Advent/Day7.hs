@@ -1,5 +1,5 @@
 {-# LANGUAGE RecursiveDo #-}
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Advent.Day7 where
 
@@ -9,21 +9,32 @@ import Text.Earley as E
 import Data.Char
 
 type Name = String
-data Val = Val Int deriving (Eq, Show, Ord)
-data Wire = Wire Val Name deriving (Eq, Show, Ord)
+data Wire = Wire Body Name deriving (Eq, Show, Ord)
+data Op = AND Name Name
+        | OR Name Name deriving (Eq, Show, Ord)
+data Body = Val Int
+          | Op Op deriving (Eq, Show, Ord)
 
-wireG :: Grammar r (Prod r String String Wire)
+wireG :: forall r. Grammar r (Prod r String Char Wire)
 wireG = mdo
-  -- x1 <- rule $ Add <$> x1 <* namedSymbol "+" <*> x2
-  --           <|> x2
-  --           <?> "sum"
-  -- arrow <- rule $
-  val <- rule $ Val . read <$> (satisfy num <?> "number")
-  wire <- rule $ Wire <$> val <* symbol "->" <*> (satisfy ident <?> "identifier")
-  return wire
-  where
-    num = all isDigit
-    ident = all isAlpha
+  whitespace <- rule $ many $ satisfy isSpace
 
-parse :: String -> ([Wire], E.Report String String)
-parse x = E.fullParses (E.parser wireG) $ lines x
+  let token :: Prod r String Char a -> Prod r String Char a
+      token p = whitespace *> p
+      name :: Prod r String Char Name
+      name = token $ some (satisfy isAsciiLower) <?> "identifier"
+      num :: Prod r String Char Int
+      num = token $ read <$> some (satisfy isDigit) <?> "number"
+      op c i = Op <$> (c <$> name <* token (word i) <*> name) <?> i
+
+  val <- rule $ Val <$> num <?> "Val"
+  and <- rule $ op AND "AND"
+  or <- rule $ op OR "OR"
+  body <- rule $ and <|> or <|> val
+  wire <- rule $ Wire <$> body <* token (word "->") <*> name <?> "Wire"
+  return wire
+
+parse :: String -> [Wire]
+parse = fst . p
+  where
+    p = E.fullParses (E.parser wireG)
