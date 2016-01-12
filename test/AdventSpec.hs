@@ -9,6 +9,7 @@ import Advent.Day5
 import Advent.Day6 as D6
 import Advent.Day7 as D7
 import Control.Arrow ((>>>))
+import Control.Monad (join)
 
 main :: IO ()
 main = hspec spec
@@ -19,20 +20,31 @@ name = ArgName . Name
 spec :: Spec
 spec = do
   describe "Day 7" $ do
-    it "456 -> y" $
-      D7.parse "456 -> y" `shouldBe` [Wire (Val 456) $ Name "y"]
-    it "x AND y -> d" $
-      D7.parse "x AND y -> d" `shouldBe` [Wire (Op (name "x" `AND` name "y")) $ Name "d"]
-    it "1 AND y -> d" $
-      D7.parse "1 AND y -> d" `shouldBe` [Wire (Op (ArgVal 1 `AND` name "y")) $ Name "d"]
-    it "x OR y -> e" $
-      D7.parse "x OR y -> e" `shouldBe` [Wire (Op (name "x" `OR` name "y")) $ Name "e"]
-    it "x LSHIFT 2 -> f" $
-      D7.parse "x LSHIFT 2 -> f" `shouldBe` [Wire (Op (name "x" `LSHIFT` 2)) $ Name "f"]
-    it "y RSHIFT 2 -> g" $
-      D7.parse "y RSHIFT 2 -> g" `shouldBe` [Wire (Op (name "y" `RSHIFT` 2)) $ Name "g"]
-    it "NOT x -> h" $
-      D7.parse "NOT x -> h" `shouldBe` [Wire (NOT (Name "x")) $ Name "h"]
+    describe "parsing" $ do
+      it "456 -> y" $
+        D7.parse "456 -> y" `shouldBe` [Wire (Val 456) $ Name "y"]
+      it "x AND y -> d" $
+        D7.parse "x AND y -> d" `shouldBe` [Wire (Op (name "x" `AND` name "y")) $ Name "d"]
+      it "1 AND y -> d" $
+        D7.parse "1 AND y -> d" `shouldBe` [Wire (Op (ArgVal 1 `AND` name "y")) $ Name "d"]
+      it "x OR y -> e" $
+        D7.parse "x OR y -> e" `shouldBe` [Wire (Op (name "x" `OR` name "y")) $ Name "e"]
+      it "x LSHIFT 2 -> f" $
+        D7.parse "x LSHIFT 2 -> f" `shouldBe` [Wire (Op (name "x" `LSHIFT` 2)) $ Name "f"]
+      it "y RSHIFT 2 -> g" $
+        D7.parse "y RSHIFT 2 -> g" `shouldBe` [Wire (Op (name "y" `RSHIFT` 2)) $ Name "g"]
+      it "NOT x -> h" $
+        D7.parse "NOT x -> h" `shouldBe` [Wire (NOT (Name "x")) $ Name "h"]
+
+    describe "evaluating" $
+      it "scenario A" $ do
+        let input = unlines
+              ["123 -> x"
+              ,"456 -> y"
+              ,"NOT y -> i"]
+        D7.parse input `shouldBe` [Wire (Val 123) $ Name "x"
+                                  ,Wire (Val 456) $ Name "y"
+                                  ,Wire (NOT (Name "y")) $ Name "i"]
 
 
   describe "Day 6" $ do

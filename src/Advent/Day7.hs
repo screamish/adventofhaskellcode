@@ -5,8 +5,8 @@ module Advent.Day7 where
 
 import Control.Applicative
 import Text.Earley as E
--- import Data.Text as T
 import Data.Char
+import Control.Monad (join)
 
 newtype Name = Name { getName :: String } deriving (Eq, Show, Ord)
 
@@ -50,6 +50,6 @@ wireG = mdo
   return wire
 
 parse :: String -> [Wire]
-parse = fst . p
+parse = join . fmap p . lines
   where
-    p = E.fullParses (E.parser wireG)
+    p = fst . E.fullParses (E.parser wireG)
