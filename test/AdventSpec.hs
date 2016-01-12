@@ -10,6 +10,7 @@ import Advent.Day6 as D6
 import Advent.Day7 as D7
 import Control.Arrow ((>>>))
 import Control.Monad (join)
+import qualified Data.Map as Map
 
 main :: IO ()
 main = hspec spec
@@ -36,8 +37,7 @@ spec = do
       it "NOT x -> h" $
         D7.parse "NOT x -> h" `shouldBe` [Wire (NOT (Name "x")) $ Name "h"]
 
-    describe "evaluating" $
-      it "scenario A" $ do
+      it "multiple wires over newlines" $ do
         let input = unlines
               ["123 -> x"
               ,"456 -> y"
@@ -45,6 +45,26 @@ spec = do
         D7.parse input `shouldBe` [Wire (Val 123) $ Name "x"
                                   ,Wire (Val 456) $ Name "y"
                                   ,Wire (NOT (Name "y")) $ Name "i"]
+
+    describe "evaluating" $
+      it "scenario A" $ do
+        let input = unlines
+              ["123 -> x"
+              ,"456 -> y"
+              ,"x AND y -> d"
+              ,"x OR y -> e"
+              ,"x LSHIFT 2 -> f"
+              ,"y RSHIFT 2 -> g"
+              ,"NOT x -> h"
+              ,"NOT y -> i"]
+        D7.eval input `shouldBe` Map.fromList [(Name "d", 72)
+                                              ,(Name "e", 507)
+                                              ,(Name "f", 492)
+                                              ,(Name "g", 114)
+                                              ,(Name "h", 65412)
+                                              ,(Name "i", 65079)
+                                              ,(Name "x", 123)
+                                              ,(Name "y", 456)]
 
 
   describe "Day 6" $ do

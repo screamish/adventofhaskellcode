@@ -7,13 +7,15 @@ import Control.Applicative
 import Text.Earley as E
 import Data.Char
 import Control.Monad (join)
+import qualified Data.Map as Map
 
 newtype Name = Name { getName :: String } deriving (Eq, Show, Ord)
+type Val = Int
 
 data Wire = Wire Body Name deriving (Eq, Show, Ord)
 
 data Arg = ArgName Name
-         | ArgVal Int
+         | ArgVal Val
            deriving (Eq, Show, Ord)
 
 data Op = AND Arg Arg
@@ -22,7 +24,7 @@ data Op = AND Arg Arg
         | RSHIFT Arg Int
           deriving (Eq, Show, Ord)
 
-data Body = Val Int
+data Body = Val Val
           | Op Op
           | NOT Name
             deriving (Eq, Show, Ord)
@@ -53,3 +55,6 @@ parse :: String -> [Wire]
 parse = join . fmap p . lines
   where
     p = fst . E.fullParses (E.parser wireG)
+
+eval :: String -> Map.Map Name Val
+eval s = mempty
