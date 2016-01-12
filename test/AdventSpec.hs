@@ -13,16 +13,26 @@ import Control.Arrow ((>>>))
 main :: IO ()
 main = hspec spec
 
+name :: String -> D7.Arg
+name = ArgName . Name
+
 spec :: Spec
 spec = do
   describe "Day 7" $ do
-    it "456 -> y" $ D7.parse "456 -> y" `shouldBe` [Wire (Val 456) "y"]
-    it "x AND y -> d" $ D7.parse "x AND y -> d" `shouldBe` [Wire (Op (Name "x" `AND` Name "y")) "d"]
-    it "1 AND y -> d" $ D7.parse "1 AND y -> d" `shouldBe` [Wire (Op (ArgVal 1 `AND` Name "y")) "d"]
-    it "x OR y -> e" $ D7.parse "x OR y -> e" `shouldBe` [Wire (Op (Name "x" `OR` Name "y")) "e"]
--- x LSHIFT 2 -> f
--- y RSHIFT 2 -> g
--- NOT x -> h
+    it "456 -> y" $
+      D7.parse "456 -> y" `shouldBe` [Wire (Val 456) $ Name "y"]
+    it "x AND y -> d" $
+      D7.parse "x AND y -> d" `shouldBe` [Wire (Op (name "x" `AND` name "y")) $ Name "d"]
+    it "1 AND y -> d" $
+      D7.parse "1 AND y -> d" `shouldBe` [Wire (Op (ArgVal 1 `AND` name "y")) $ Name "d"]
+    it "x OR y -> e" $
+      D7.parse "x OR y -> e" `shouldBe` [Wire (Op (name "x" `OR` name "y")) $ Name "e"]
+    it "x LSHIFT 2 -> f" $
+      D7.parse "x LSHIFT 2 -> f" `shouldBe` [Wire (Op (name "x" `LSHIFT` 2)) $ Name "f"]
+    it "y RSHIFT 2 -> g" $
+      D7.parse "y RSHIFT 2 -> g" `shouldBe` [Wire (Op (name "y" `RSHIFT` 2)) $ Name "g"]
+    it "NOT x -> h" $
+      D7.parse "NOT x -> h" `shouldBe` [Wire (NOT (Name "x")) $ Name "h"]
 
 
   describe "Day 6" $ do
@@ -64,7 +74,7 @@ spec = do
 
 -- The light grid you bought actually has individual brightness controls; each light can have a brightness of zero or more. The lights all start at zero.
 
-      it "The phrase turn on actually means that you should increase the brightness of those lights by 1." $ do
+      it "The phrase turn on actually means that you should increase the brightness of those lights by 1." $
         D6.elvish TurnOn 1 `shouldBe` 2
 
       it "The phrase turn off actually means that you should decrease the brightness of those lights by 1, to a minimum of zero." $ do

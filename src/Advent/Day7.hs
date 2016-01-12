@@ -8,14 +8,24 @@ import Text.Earley as E
 -- import Data.Text as T
 import Data.Char
 
-type Name = String
+newtype Name = Name { getName :: String } deriving (Eq, Show, Ord)
+
 data Wire = Wire Body Name deriving (Eq, Show, Ord)
-data Arg = Name Name
-         | ArgVal Int deriving (Eq, Show, Ord)
+
+data Arg = ArgName Name
+         | ArgVal Int
+           deriving (Eq, Show, Ord)
+
 data Op = AND Arg Arg
-        | OR Arg Arg deriving (Eq, Show, Ord)
+        | OR Arg Arg
+        | LSHIFT Arg Int
+        | RSHIFT Arg Int
+          deriving (Eq, Show, Ord)
+
 data Body = Val Int
-          | Op Op deriving (Eq, Show, Ord)
+          | Op Op
+          | NOT Name
+            deriving (Eq, Show, Ord)
 
 wireG :: forall r. Grammar r (Prod r String Char Wire)
 wireG = mdo
@@ -24,17 +34,18 @@ wireG = mdo
   let token :: Prod r String Char a -> Prod r String Char a
       token p = whitespace *> p
       name :: Prod r String Char Name
-      name = token $ some (satisfy isAsciiLower) <?> "identifier"
+      name = token $ Name <$> some (satisfy isAsciiLower) <?> "identifier"
       num :: Prod r String Char Int
       num = token $ read <$> some (satisfy isDigit) <?> "number"
-      arg = (ArgVal <$> num) <|> (Name <$> name)
-      op constructor identifier =
-        Op <$> (constructor <$> arg <* token (word identifier) <*> arg) <?> identifier
+      arg = (ArgVal <$> num) <|> (ArgName <$> name)
 
   val <- rule $ Val <$> num <?> "Val"
-  and <- rule $ op AND "AND"
-  or <- rule $ op OR "OR"
-  body <- rule $ and <|> or <|> val
+  and <- rule $ Op <$> (AND <$> arg <* token (word "AND") <*> arg) <?> "AND"
+  or <- rule $ Op <$> (OR <$> arg <* token (word "OR") <*> arg) <?> "OR"
+  lshift <- rule $ Op <$> (LSHIFT <$> arg <* token (word "LSHIFT") <*> num) <?> "LSHIFT"
+  rshift <- rule $ Op <$> (RSHIFT <$> arg <* token (word "RSHIFT") <*> num) <?> "LSHIFT"
+  not <- rule $ NOT <$> (token (word "NOT") *> name) <?> "NOT"
+  body <- rule $ and <|> or <|> val <|> lshift <|> rshift <|> not
   wire <- rule $ Wire <$> body <* token (word "->") <*> name <?> "Wire"
   return wire
 
