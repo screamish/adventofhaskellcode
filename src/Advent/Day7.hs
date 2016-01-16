@@ -6,11 +6,17 @@ module Advent.Day7 where
 import Control.Applicative
 import Text.Earley as E
 import Data.Char
-import Control.Monad (join)
+import Data.Word (Word16)
 import qualified Data.Map as Map
+import Control.Monad.State.Strict
+import Data.Bits ((.|.), (.&.), complement, shiftL, shiftR)
 
-newtype Name = Name { getName :: String } deriving (Eq, Show, Ord)
-type Val = Int
+newtype Name = Name { getName :: String } deriving (Eq, Ord)
+
+instance Show Name where
+  show = show . getName
+
+type Val = Word16
 
 data Wire = Wire Body Name deriving (Eq, Show, Ord)
 
@@ -29,6 +35,28 @@ data Body = Val Val
           | NOT Name
             deriving (Eq, Show, Ord)
 
+eval' :: Map.Map Name Body -> Body -> State (Map.Map Name Val) Val
+eval' env b =
+  case b of
+    Val v -> eval'' $ ArgVal v
+    Op (AND a1 a2) -> (.&.) <$> eval'' a1 <*> eval'' a2
+    Op (OR a1 a2) -> (.|.) <$> eval'' a1 <*> eval'' a2
+    Op (LSHIFT a n) -> flip shiftL n <$> eval'' a
+    Op (RSHIFT a n) -> flip shiftR n <$> eval'' a
+    NOT n -> complement <$> eval'' (ArgName n)
+
+  where
+    eval'' :: Arg -> State (Map.Map Name Val) Val
+    eval'' (ArgVal v) = return v
+    eval'' (ArgName n) = do
+      vs <- get
+      case Map.lookup n vs of
+        Just v -> return v
+        Nothing -> do
+          v <- eval' env $ env Map.! n
+          modify $ Map.insert n v
+          return v
+
 wireG :: forall r. Grammar r (Prod r String Char Wire)
 wireG = mdo
   whitespace <- rule $ many $ satisfy isSpace
@@ -37,7 +65,7 @@ wireG = mdo
       token p = whitespace *> p
       name :: Prod r String Char Name
       name = token $ Name <$> some (satisfy isAsciiLower) <?> "identifier"
-      num :: Prod r String Char Int
+      num :: (Num a, Read a) => Prod r String Char a
       num = token $ read <$> some (satisfy isDigit) <?> "number"
       arg = (ArgVal <$> num) <|> (ArgName <$> name)
 
@@ -57,4 +85,15 @@ parse = join . fmap p . lines
     p = fst . E.fullParses (E.parser wireG)
 
 eval :: String -> Map.Map Name Val
-eval s = mempty
+eval s =
+  let wires :: [Wire]
+      wires = parse s
+      env :: Map.Map Name Body
+      env = Map.fromList $ strip wires
+  in
+  evalState (mapM (eval' env) env) mempty
+    where strip = fmap (\(Wire b n) -> (n, b))
+
+eval1 :: String -> Name -> Val
+eval1 s wireName =
+  eval s Map.! wireName

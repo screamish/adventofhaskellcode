@@ -8,10 +8,17 @@ import Advent.Day3
 import Advent.Day4
 import Advent.Day5
 import qualified Advent.Day6 as D6
+import qualified Advent.Day7 as D7
 
 main :: IO ()
 main =
-  day6
+  day7
+
+day7 :: IO ()
+day7 = do
+  input <- LIO.readFile "day7input.txt"
+  let a = D7.eval1 (T.unpack input) (D7.Name "a")
+  print $ "Day 7(a): wire a = " ++ show a
 
 day6 :: IO ()
 day6 = do
