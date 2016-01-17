@@ -48,6 +48,12 @@ test-suite advent-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             AdventSpec.hs
+  other-modules:       Advent.Day2Spec
+                     , Advent.Day3Spec
+                     , Advent.Day4Spec
+                     , Advent.Day5Spec
+                     , Advent.Day6Spec
+                     , Advent.Day7Spec
   build-depends:       base
                      , advent
                      , hspec
