@@ -17,7 +17,7 @@ import qualified Data.Vector as V
 import qualified Data.Vector.Mutable as VM
 import Control.Monad.ST (ST, runST)
 import Control.Monad.Reader (ReaderT, runReaderT, lift, ask)
-import Control.Monad (forM, forM_)
+import Control.Monad (forM)
 
 data Action = TurnOn
             | TurnOff
@@ -88,7 +88,7 @@ step language c =
 runSteps :: (Action -> a -> a) -> a -> [Command] -> LightGrid a
 runSteps language initialValue t = runST $ do
     s <- initialState initialValue
-    runReaderT (Control.Monad.forM t $ step language) s
+    _ <- runReaderT (Control.Monad.forM t $ step language) s
     freeze s
 
 freeze :: LightGridM s a -> ST s (LightGrid a)
