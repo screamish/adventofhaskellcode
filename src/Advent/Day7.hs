@@ -88,19 +88,25 @@ parse = join . fmap p . lines
   where
     p = fst . E.fullParses (E.parser wireG)
 
-eval :: String -> Map.Map Name Val
-eval s =
-  let wires :: [Wire]
-      wires = parse s
-      env :: Map.Map Name Body
-      env = Map.fromList $ strip wires
-  in
-  evalState (mapM (eval' env) env) mempty
-    where strip = fmap (\(Wire b n) -> (n, b))
+toMap :: [Wire] -> Map.Map Name Body
+toMap wires = Map.fromList $ strip wires
+  where strip = fmap (\(Wire b n) -> (n, b))
 
-eval1 :: String -> Name -> Val
-eval1 s wireName =
-  fromMaybe (error $ "wireName: " ++ show wireName ++ " could not be found") $ Map.lookup wireName $ eval s
+eval :: Map.Map Name Body -> Map.Map Name Val
+eval wires = evalState (mapM (eval' wires) wires) mempty
+
+eval1 :: Map.Map Name Body -> Name -> Val
+eval1 wires wireName =
+  fromMaybe (error $ "wireName: " ++ show wireName ++ " could not be found") $ Map.lookup wireName $ eval wires
+
+feedbackLoop :: Map.Map Name Body -> Name -> Name -> Val
+feedbackLoop wires wireName wireToFeedback =
+  let initialOutput = eval1 wires wireName
+      wires' = Map.update (const . Just . Val $ initialOutput) wireToFeedback wires
+  in
+    eval1 wires' wireName
+
+-- Show instances for the DSL to support round-tripping via 'show . parse'
 
 instance Show Wire where
   show (Wire body name) = show body ++ " -> " ++ show name

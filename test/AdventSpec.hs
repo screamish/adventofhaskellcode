@@ -4,7 +4,6 @@ module Main where
 
 import Test.Hspec
 import Test.QuickCheck
-import Test.QuickCheck.Modifiers
 import Advent.Day2
 import Advent.Day3
 import Advent.Day4
@@ -93,14 +92,15 @@ spec = do
               ,"y RSHIFT 2 -> g"
               ,"NOT x -> h"
               ,"NOT y -> i"]
-        D7.eval input `shouldBe` Map.fromList [(Name "d", 72)
-                                              ,(Name "e", 507)
-                                              ,(Name "f", 492)
-                                              ,(Name "g", 114)
-                                              ,(Name "h", 65412)
-                                              ,(Name "i", 65079)
-                                              ,(Name "x", 123)
-                                              ,(Name "y", 456)]
+        (D7.eval . D7.toMap . D7.parse) input `shouldBe`
+          Map.fromList [ (Name "d", 72)
+                        ,(Name "e", 507)
+                        ,(Name "f", 492)
+                        ,(Name "g", 114)
+                        ,(Name "h", 65412)
+                        ,(Name "i", 65079)
+                        ,(Name "x", 123)
+                        ,(Name "y", 456)]
 
 
   describe "Day 6" $ do
