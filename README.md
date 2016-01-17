@@ -1,5 +1,7 @@
 # Advent of Code in Haskell
 
+![Build status](https://travis-ci.org/screamish/adventofhaskellcode.svg)
+
 These are my filthy scratchings in Haskell. The exercises are courtesty of http://adventofcode.com/
 
 ## "Your filthy code offends me, I'd like to improve it but I don't know how to get started with Haskell"
