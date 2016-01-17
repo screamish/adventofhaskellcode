@@ -1,6 +1,6 @@
 # Advent of Code in Haskell
 
-![Build status](https://travis-ci.org/screamish/adventofhaskellcode.svg)
+[![Build Status](https://travis-ci.org/screamish/adventofhaskellcode.svg?branch=master)](https://travis-ci.org/screamish/adventofhaskellcode)
 
 These are my filthy scratchings in Haskell. The exercises are courtesty of http://adventofcode.com/
 
