@@ -1,7 +1,10 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Main where
 
 import Test.Hspec
-import Test.QuickCheck ()
+import Test.QuickCheck
+import Test.QuickCheck.Modifiers
 import Advent.Day2
 import Advent.Day3
 import Advent.Day4
@@ -9,7 +12,7 @@ import Advent.Day5
 import Advent.Day6 as D6
 import Advent.Day7 as D7
 import Control.Arrow ((>>>))
-import Control.Monad (join)
+import Control.Monad (liftM)
 import qualified Data.Map as Map
 
 main :: IO ()
@@ -17,6 +20,32 @@ main = hspec spec
 
 name :: String -> D7.Arg
 name = ArgName . Name
+
+arb :: Arbitrary a => Gen a
+arb = arbitrary
+
+instance Arbitrary D7.Arg where
+  arbitrary = oneof [ArgName <$> arb, ArgVal <$> arb]
+
+instance Arbitrary Op where
+  arbitrary = oneof [AND <$> arb <*> arb
+                    ,OR <$> arb <*> arb
+                    ,LSHIFT <$> arb <*> arb
+                    ,RSHIFT <$> arb <*> arb]
+
+instance Arbitrary Body where
+  arbitrary = oneof [liftM Val arbitrary, liftM Op arbitrary, liftM NOT arbitrary]
+
+instance Arbitrary Name where
+  arbitrary = do
+    let chars = elements ['a'..'z']
+    c <- chars
+    cs <- listOf chars
+    return $ Name (c : cs)
+
+instance Arbitrary Wire where
+  arbitrary = Wire <$> arbitrary <*> arbitrary
+
 
 spec :: Spec
 spec = do
@@ -36,6 +65,13 @@ spec = do
         D7.parse "y RSHIFT 2 -> g" `shouldBe` [Wire (Op (name "y" `RSHIFT` 2)) $ Name "g"]
       it "NOT x -> h" $
         D7.parse "NOT x -> h" `shouldBe` [Wire (NOT (Name "x")) $ Name "h"]
+
+      it "show and parse can round-trip" $ property $
+        \(wire :: Wire) -> D7.parse (show wire) == [wire]
+
+      it "this little bastard case" $
+        D7.parse "lx -> a" `shouldBe` [Wire (BName . Name $ "lx") $ Name "a"]
+
 
       it "multiple wires over newlines" $ do
         let input = unlines
