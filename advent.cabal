@@ -1,13 +1,13 @@
 name:                advent
 version:             0.1.0.0
-synopsis:            Initial project template from stack
+synopsis:            An attempt to answer the Advent of Code exercises in Haskell
 description:         Please see README.md
-homepage:            http://github.com/githubuser/advent#readme
+homepage:            http://github.com/screamish/adventofhaskellcode
 license:             BSD3
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2010 Author Here
+author:              Simon Fenton
+maintainer:          swfenton@gmail.com
+copyright:           2016 Simon Fenton
 category:            Web
 build-type:          Simple
 -- extra-source-files:
